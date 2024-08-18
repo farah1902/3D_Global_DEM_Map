@@ -20,13 +20,37 @@
             width: 150px; /* Adjust the size of the legend image */
             height: auto;
         }
+        #basemapMenu {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: rgba(129, 129, 129, 0.658);
+            padding: 10px;
+            z-index: 1;
+            border-radius: 5px;
+        }
+        #basemapMenu select {
+            padding: 5px;
+        }
+
     </style>
     <script src='https://api.mapbox.com/mapbox-gl-js/v2.10.0/mapbox-gl.js'></script>
     <link href='https://api.mapbox.com/mapbox-gl-js/v2.10.0/mapbox-gl.css' rel='stylesheet' />
 </head>
+
 <body>
     <div id="legend">
         <img src="https://i.postimg.cc/yddLX0NY/gep1.png" alt="Legend">
+    </div>
+    <div id="basemapMenu">
+        <label for="basemap">Choose a basemap:</label>
+        <select id="basemap">
+            <option value="mapbox://styles/mapbox/satellite-streets-v12">Satellite Streets</option>
+            <option value="mapbox://styles/mapbox/streets-v12">Streets</option>
+            <option value="mapbox://styles/mapbox/outdoors-v12">Outdoors</option>
+            <option value="mapbox://styles/mapbox/light-v10">Light</option>
+            <option value="mapbox://styles/mapbox/dark-v10">Dark</option>
+        </select>
     </div>
     <div id="map"></div>
     <script>
@@ -49,6 +73,22 @@
                 'maxzoom': 14
             });
             map.setTerrain({ 'source': 'mapbox-dem', 'exaggeration': 1.5 });
+        });
+
+        // Function to change basemap
+        document.getElementById('basemap').addEventListener('change', function() {
+            const style = this.value;
+            map.setStyle(style);
+
+            map.on('style.load', () => {
+                map.addSource('mapbox-dem', {
+                    'type': 'raster-dem',
+                    'url': 'mapbox://mapbox.mapbox-terrain-dem-v1',
+                    'tileSize': 512,
+                    'maxzoom': 14
+                });
+                map.setTerrain({ 'source': 'mapbox-dem', 'exaggeration': 1.5 });
+            });
         });
     </script>
 </body>
